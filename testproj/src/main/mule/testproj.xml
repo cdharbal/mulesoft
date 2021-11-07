@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4161a21c-3e03-432a-b479-d68bc2c1337f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="5958f0f8-ebdc-465a-a6cd-eda66a33cb4e" >
+		<file:connection workingDir="C:\Users\sridh\Desktop\MULE\Exercise" />
+	</file:config>
+	<file:config name="File_Config1" doc:name="File Config" doc:id="195491c4-f78a-48e7-8738-65f39e58c1ea" />
+	<flow name="CSVtoJSONFlow" doc:id="9162c1e4-0809-4b94-8c42-6c8776a5fa1d" >
+		<http:listener doc:name="Listener" doc:id="baf26c4b-6646-4ade-9e50-7690613e5b31" config-ref="HTTP_Listener_config" path="/CSV2JSON"/>
+		<file:read doc:name="Read" doc:id="c335bad1-977b-4663-b7b4-c36664d0b881" config-ref="File_Config" path="C:\Users\sridh\Desktop\MULE\Exercise\StudentCSV.csv" outputMimeType="application/csv"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ac07c51e-9af0-4ce9-9560-c1f658275802" message="Input Payload - #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="0fa6e8e2-3fca-4cb1-88ad-417f57e761e6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var AllStudents = payload map {
+	ID: $.ID as Number,
+	Name: $.Name as String,
+	Semester: $.Semester as Number,
+	Marks: $.Marks as Number
+}
+---
+//AllStudents]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="027f0507-c965-4f7e-81f8-ed42dd16a382" config-ref="File_Config1"/>
+	</flow>
+	<flow name="PayloadFlow" doc:id="777e0f9e-15d0-4cb1-8e5e-22915b125e2d" >
+		<http:listener doc:name="Listener" doc:id="196a33aa-d36b-43af-93b1-51d227acaf44" config-ref="HTTP_Listener_config" path="/test" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1cb9deea-e831-4f10-963b-a28d21a6cc08" message="Welcome Back to Mule World"/>
+		<logger level="INFO" doc:name="LogPayload" doc:id="207af3ba-7757-407a-be92-7dff14cbfa01" message="Incoming Message - #[payload]"/>
+		<set-payload value='{"name":"Raja"}' doc:name="Set Payload" doc:id="75adce92-6e0e-4845-99b7-e7935ab16944" />
+		<logger level="INFO" doc:name="LogUpdatedPayload" doc:id="ad943a27-96b1-4b64-a725-90fbdf340a1d" message="Updated Message - #[payload]" />
+	</flow>
+</mule>

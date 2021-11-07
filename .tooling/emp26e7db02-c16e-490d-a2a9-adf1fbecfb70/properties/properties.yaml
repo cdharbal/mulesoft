@@ -1,0 +1,6 @@
+DB:
+  host: "localhost"
+  port: "1521"
+  user: "mule"
+  pwd: "Welcome1"
+  schema: "orcl1"

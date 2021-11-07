@@ -1,0 +1,6 @@
+DB:
+  host: "localhost"
+  port: "3606"
+  user: "root"
+  pwd: "Welcome1"
+  schema: "muledb"

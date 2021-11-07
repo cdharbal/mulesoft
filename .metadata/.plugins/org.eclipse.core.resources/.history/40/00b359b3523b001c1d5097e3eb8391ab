@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c0095a77-a7b3-46a8-aff2-17ac689616d5">
+		<http:listener-connection host="0.0.0.0" port="8081"/>
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="4cf9b2fd-0efa-437b-ac00-63f16286110a" >
+		<file:connection workingDir="C:\Users\sridh\Desktop\MULE\writef" />
+	</file:config>
+	<flow name="firstprojFlow" doc:id="648a8579-b84d-4aa8-8b5c-3fd7eaf7aaf5" >
+		<http:listener doc:name="Listener" doc:id="c7a78876-52fd-4169-8cf0-2b86b69f8610" config-ref="HTTP_Listener_config" path="/firstProj" allowedMethods="GET"/>
+		<ee:transform doc:name="Transform Message" doc:id="1bb39b12-cdfb-4a38-a4b5-55a674edfe66" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import java!firstproj::MyUtils
+var myInput = readUrl("classpath://file_example_XLS_10.xls", "application/xlsx")
+output application/json
+---
+{
+	a: MyUtils::appendRandom("srr")
+	myInput."Sheet1" filter ((entry, index) -> entry."Country" == "France")
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="7a105be9-f344-4b95-bdb2-f42d6e28d4ea" config-ref="File_Config" path="C:\Users\sridh\Desktop\MULE\writef\data.json" mode="APPEND"/>
+	</flow>
+	<flow name="firstprojFlow1" doc:id="3b0c9e45-b815-4a64-a117-2844683762c4" >
+		<http:listener doc:name="Listener" doc:id="faab408c-69ef-4516-8cb1-2a047ecfd790" config-ref="HTTP_Listener_config" path="/Jav"/>
+	</flow>
+</mule>

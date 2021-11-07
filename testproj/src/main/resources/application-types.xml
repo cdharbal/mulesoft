@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="Array" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: object
+properties:
+    ID:
+        type: string
+    Name:
+        type: string
+    Samester:
+        type: string
+    Marks:
+        type: string
+
+
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0fa6e8e2-3fca-4cb1-88ad-417f57e761e6"/>
+</types:mule>
